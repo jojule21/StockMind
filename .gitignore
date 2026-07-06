@@ -1,0 +1,13 @@
+# python
+venv/
+__pycache__/
+*.pyc
+
+# logs and junk
+*.log
+nohup.out
+.DS_Store
+
+# frontend (when ishpreet adds it)
+node_modules/
+dist/

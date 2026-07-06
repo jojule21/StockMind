@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MarketMinds Backend Tester</title>
+</head>
+<body>
+  <h1>MarketMinds Backend Tester</h1>
+  <p>Backend must be running first: <code>python app.py</code></p>
+
+  <h2>1. Health</h2>
+  <button onclick="testHealth()">GET /api/health</button>
+
+  <h2>2. Watchlist</h2>
+  <button onclick="testWatchlist()">GET /api/watchlist</button>
+
+  <h2>2b. Live Stream (real-time push)</h2>
+  <button onclick="startStream()">Start stream</button>
+  <button onclick="stopStream()">Stop stream</button>
+  <span id="streamStatus">(not connected)</span>
+
+  <h2>3. History</h2>
+  <input id="histSymbol" value="AAPL">
+  <button onclick="testHistory()">GET /api/stock/{symbol}/history</button>
+
+  <h2>4. Options Price</h2>
+  Ticker: <input id="ticker" value="AAPL"><br>
+  Strike: <input id="strike" value="150.00"><br>
+  Type:
+  <select id="optType">
+    <option value="call">call</option>
+    <option value="put">put</option>
+  </select><br>
+  Expiration: <input id="exp" value="2026-12-18"><br>
+  Risk-Free Rate %: <input id="rate" value="4.25"><br>
+  Volatility %: <input id="vol" value="22.45"><br>
+  Model:
+  <select id="model">
+    <option value="monte_carlo">monte_carlo</option>
+    <option value="black_scholes">black_scholes</option>
+    <option value="binomial">binomial</option>
+  </select><br><br>
+  <button onclick="testOptions()">POST /api/options/price</button>
+
+  <h2>Response</h2>
+  <pre id="output" style="background:#eee;padding:10px;">(click a button)</pre>
+
+  <script>
+    const BASE = "http://localhost:5050";
+    const out = document.getElementById("output");
+
+    function show(data) {
+      out.textContent = JSON.stringify(data, null, 2);
+    }
+
+    function showError(err) {
+      out.textContent = "Request failed: " + err + "\n(is the server running?)";
+    }
+
+    function testHealth() {
+      fetch(BASE + "/api/health")
+        .then(r => r.json()).then(show).catch(showError);
+    }
+
+    function testWatchlist() {
+      fetch(BASE + "/api/watchlist")
+        .then(r => r.json()).then(show).catch(showError);
+    }
+
+    let stream = null;
+
+    function startStream() {
+      stopStream();
+      stream = new EventSource(BASE + "/api/watchlist/stream");
+      document.getElementById("streamStatus").textContent = "(connected, waiting for pushes...)";
+      stream.onmessage = function(e) {
+        show(JSON.parse(e.data));
+        document.getElementById("streamStatus").textContent =
+          "(live - last push " + new Date().toLocaleTimeString() + ")";
+      };
+      stream.onerror = function() {
+        document.getElementById("streamStatus").textContent = "(connection lost)";
+      };
+    }
+
+    function stopStream() {
+      if (stream) { stream.close(); stream = null; }
+      document.getElementById("streamStatus").textContent = "(not connected)";
+    }
+
+    function testHistory() {
+      const sym = document.getElementById("histSymbol").value;
+      fetch(BASE + "/api/stock/" + sym + "/history?days=7")
+        .then(r => r.json()).then(show).catch(showError);
+    }
+
+    function testOptions() {
+      const body = {
+        ticker: document.getElementById("ticker").value,
+        strike_price: parseFloat(document.getElementById("strike").value),
+        option_type: document.getElementById("optType").value,
+        expiration_date: document.getElementById("exp").value,
+        risk_free_rate: parseFloat(document.getElementById("rate").value),
+        volatility: parseFloat(document.getElementById("vol").value),
+        model: document.getElementById("model").value
+      };
+      fetch(BASE + "/api/options/price", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      }).then(r => r.json()).then(show).catch(showError);
+    }
+  </script>
+</body>
+</html>
