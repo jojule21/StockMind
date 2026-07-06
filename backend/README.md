@@ -1,4 +1,4 @@
-# MarketMinds Backend (Joel's part)
+# StockMind Backend
 
 CSCI 49900 Summer 2026
 Team: Ishpreet Singh (frontend), Will Gadson (data + math), Joel Lee (backend)
