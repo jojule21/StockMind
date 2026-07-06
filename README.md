@@ -1,4 +1,4 @@
-# MarketMinds
+# MarketMinds (MarketMinds is an educational tool, not financial advice, use at your own risk)
 
 CSCI 49900 capstone Summer 2026
 Team: Joel Lee (backend), Will Gadson (data + math), Ishpreet Singh (frontend)
