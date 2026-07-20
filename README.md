@@ -12,25 +12,25 @@ Team: Joel Lee (backend), Will Gadson (data + math), Ishpreet Singh (frontend)
 ## Architecture
 
 ```
-┌──────────────┐   HTTP / SSE    ┌─────────────────────────────┐
-│   Frontend    │ ◀────────────▶ │        Flask API (app.py)    │
-│  (Ishpreet)   │                │  REST endpoints + real-time  │
-└──────────────┘                │  SSE price stream, timeout & │
-                                │  knocked-out handling        │
-                                └──────────┬──────────────────┘
+┌──────────────┐   HTTP / SSE  ┌──────────────────────────────┐
+│   Frontend   │ ◀────────────▶│    JL  Flask API (app.py)    │
+│  (Ishpreet)  │               │  REST endpoints + real-time  │
+└──────────────┘               │  SSE price stream, timeout & │
+                               │  knocked-out handling        │
+                               └───────────┬──────────────────┘
                                            │ adapter (calculations.py)
                               ┌────────────┴────────────┐
                               ▼                         ▼
                    ┌──────────────────┐      ┌────────────────────┐
-                   │  market_data.py   │      │   monte_carlo.py    │
-                   │  Yahoo Finance    │      │  parallel Monte     │
-                   │  live data (Will) │      │  Carlo engine (Will)│
+                   │  market_data.py  │      │   monte_carlo.py   │
+                   │  Yahoo Finance   │      │  parallel Monte    │
+                   │  live data (Will)│      │ Carlo engine (Will)│
                    └──────────────────┘      └────────────────────┘
                               │
                               ▼
                    ┌──────────────────┐
-                   │   mock_data.py    │  ← fallback so the frontend
-                   │  (development)    │    works without live data
+                   │   mock_data.py   │  ← fallback so the frontend
+                   │ (development) JL │    works without live data
                    └──────────────────┘
 ```
 
