@@ -1,6 +1,6 @@
-# StockMind
+# MarketMind
 
-> StockMind is an educational tool, not financial advice. Use at your own risk.
+> MarketMind is an educational tool, not financial advice. Use at your own risk.
 
 Stock watchlist + options pricing web app that gives everyday retail investors access to financial tools on their phones. Live prices come from Yahoo Finance, and the options calculator runs Monte Carlo simulations.
 
